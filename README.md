@@ -1,137 +1,154 @@
-## Monad-flavored Foundry
+# Project Name
 
-> [!NOTE]
-> In this Foundry template, the default chain is `monadTestnet`. If you wish to change it, change the network in `foundry.toml`
+> One-line pitch. TODO
 
-<h4 align="center">
-  <a href="https://docs.monad.xyz">Monad Documentation</a> | <a href="https://book.getfoundry.sh/">Foundry Documentation</a> |
-   <a href="https://github.com/monad-developers/foundry-monad/issues">Report Issue</a>
-</h4>
+Built for the [Monad Metropolis hackathon](https://hackathon.monad.xyz) (Sept 1 to Oct 13, 2026).
+Submission checklist: [docs/rules-checklist.md](docs/rules-checklist.md).
 
+| | |
+|---|---|
+| Track | TODO (exactly one, see [Track](#track)) |
+| Network | Monad Testnet (10143) / Monad Mainnet (143) |
+| Demo video | TODO link (3:00 max) |
+| Live app | TODO link (optional) |
+| License | [MIT](LICENSE) |
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Problem
 
-Foundry consists of:
+TODO: who has the problem, what it costs them today, why existing solutions fall short.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat, and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions, and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose Solidity REPL.
+## Track
 
-## Documentation
+Competing in exactly one track:
 
-https://book.getfoundry.sh/
+- [ ] Onchain Finance & Trading
+- [ ] Consumer Products & Payments
+- [ ] Social, Attention & Culture
+- [ ] Trust, Identity & AI Infrastructure
 
-## Usage
+TODO: one sentence on why the project fits this track.
 
-### Build
+## How it works
 
-```shell
-forge build
+TODO: architecture overview and user flow.
+
+```
+user -> app (Next.js + viem) -> contracts on Monad
 ```
 
-### Test
+| Component | Path | Description |
+|---|---|---|
+| Contracts | `src/` | TODO |
+| Deploy scripts | `script/` | TODO |
+| Tests | `test/` | TODO |
+| Frontend | `app/` | Next.js + viem (`monadTestnet`) |
+
+## Why Monad
+
+TODO: what the project needs from Monad specifically, and why it would be worse or impossible on another chain. Back claims with numbers from your own transactions where possible.
+
+- TODO: throughput / ~400 ms blocks / fast finality and what that enables here
+- TODO: low fees and what interaction pattern that makes viable
+- TODO: full EVM compatibility (same Solidity, Foundry, viem)
+
+## Contracts & tx hashes
+
+Deployment evidence (mainnet or testnet). Broadcast logs for non-local chains are committed under `broadcast/`.
+
+| Contract | Network | Address | Explorer |
+|---|---|---|---|
+| TODO | Monad Testnet (10143) | `0x...` | [MonadVision](https://testnet.monadvision.com/address/0x...) |
+
+| Action | Network | Tx hash | Explorer |
+|---|---|---|---|
+| Deploy TODO | Monad Testnet (10143) | `0x...` | [MonadVision](https://testnet.monadvision.com/tx/0x...) |
+| TODO key user action | Monad Testnet (10143) | `0x...` | [MonadVision](https://testnet.monadvision.com/tx/0x...) |
+
+Verified source: TODO (yes/no, explorer link).
+
+## Run locally
+
+### Prerequisites
+
+- **Foundry v1.8.0 or later** (official release, which includes native Monad support). The legacy `category-labs` Monad Foundry fork stops at the `MonadNine` hardfork and is not supported.
+  ```shell
+  curl -L https://foundry.paradigm.xyz | bash
+  foundryup
+  ./scripts/check-foundry.sh   # fails if forge is older than 1.8.0 or is the legacy fork
+  ```
+- Node.js 20.9 or later (22 LTS recommended) and npm
+- Testnet MON from the [faucet](https://testnet.monad.xyz)
+
+### Contracts
+
+`foundry.toml` sets `network = "monad"`, so local tests and scripts run with Monad's gas model, opcode pricing, precompiles and 128 KB contract size limit. The default profile targets Monad Testnet; the `mainnet` profile targets Monad Mainnet.
 
 ```shell
+git clone --recurse-submodules <this repo>
+cd <repo>
+cp .env.example .env
+
+forge build
 forge test
 ```
 
-### Format
+Deploy with an encrypted keystore (never a raw private key):
 
 ```shell
-forge fmt
+cast wallet import monad-deployer --interactive   # name must match ETH_KEYSTORE_ACCOUNT in .env
+cast wallet address --account monad-deployer      # fund this address from the faucet
+
+# Monad Testnet (default profile)
+forge script script/<Script>.s.sol --broadcast
+
+# Monad Mainnet
+FOUNDRY_PROFILE=mainnet forge script script/<Script>.s.sol --broadcast
 ```
 
-### Gas Snapshots
+Verify on MonadVision (Sourcify, no API key):
 
 ```shell
-forge snapshot
-```
-
-### Anvil
-
-```shell
-anvil
-```
-
-### Deploy to Monad Testnet
-
-First, you need to create a keystore file. Do not forget to remember the password! You will need it to deploy your contract.
-
-```shell
-cast wallet import monad-deployer --private-key $(cast wallet new | grep 'Private key:' | awk '{print $3}')
-```
-
-After creating the keystore, you can read its address using:
-
-```shell
-cast wallet address --account monad-deployer
-```
-
-The command above will create a keystore file named `monad-deployer` in the `~/.foundry/keystores` directory.
-
-Then, you can deploy your contract to the Monad Testnet using the keystore file you created.
-
-```shell
-forge create src/Counter.sol:Counter --account monad-deployer --broadcast
-```
-
-### Verify Contract
-
-```shell
-forge verify-contract \
-  <contract_address> \
-  src/Counter.sol:Counter \
+forge verify-contract <address> <ContractName> \
   --chain 10143 \
   --verifier sourcify \
-  --verifier-url https://sourcify-api-monad.blockvision.org
+  --verifier-url https://sourcify-api-monad.blockvision.org/
+# mainnet: --chain 143
 ```
 
-### Cast
-[Cast reference](https://book.getfoundry.sh/cast/)
-```shell
-cast <subcommand>
-```
-
-### Help
+### Frontend
 
 ```shell
-forge --help
-anvil --help
-cast --help
+cd app
+cp .env.example .env.local
+npm install
+npm run dev   # http://localhost:3000
 ```
 
+## Demo video
 
-## FAQ
+TODO: link (YouTube / Loom / Vimeo, public, **3:00 max**) showing the working product making real Monad transactions.
 
-### Error: `Error: server returned an error response: error code -32603: Signer had insufficient balance`
+## AI tools used
 
-This error happens when you don't have enough balance to deploy your contract. You can check your balance with the following command:
+This project was built with AI coding assistance, disclosed as required by the hackathon rules.
 
-```shell
-cast wallet address --account monad-deployer
-```
+| Tool | Used for |
+|---|---|
+| [Claude Code](https://claude.com/claude-code) (Anthropic) | Repository scaffolding (Foundry config, Next.js setup, README and checklist skeletons). TODO: list further uses, e.g. contract drafting, tests, frontend, debugging. |
 
-### I have constructor arguments, how do I deploy my contract?
+## Built during the hackathon (Sept 1 to Oct 13)
 
-```shell
-forge create \
-  src/Counter.sol:Counter \
-  --account monad-deployer \
-  --broadcast \
-  --constructor-args <constructor_arguments>
-```
+All project code was written during the Monad Metropolis build window, Sept 1 to Oct 13, 2026 (deadline Oct 13, 11:59 PM ET). The git history is the record.
 
-### I have constructor arguments, how do I verify my contract?
+Pre-existing code used as a foundation (not original work):
 
-```shell
-forge verify-contract \
-  <contract_address> \
-  src/Counter.sol:Counter \
-  --chain 10143 \
-  --verifier sourcify \
-  --verifier-url https://sourcify-api-monad.blockvision.org \
-  --constructor-args <abi_encoded_constructor_arguments>
-```
+| Source | What | License |
+|---|---|---|
+| [monad-developers/foundry-monad](https://github.com/monad-developers/foundry-monad) | Foundry template: config, `Counter` example, CI (imported unchanged in the first commit) | No license file |
+| [foundry-rs/forge-std](https://github.com/foundry-rs/forge-std) | Test and script library (`lib/`) | MIT / Apache-2.0 |
+| [OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts) | Contract library (`lib/`) | MIT |
+| [create-next-app](https://nextjs.org/docs/app/api-reference/cli/create-next-app) | Next.js boilerplate in `app/` | MIT |
 
-Please refer to the [Foundry Book](https://book.getfoundry.sh/) for more information.
+## License
+
+[MIT](LICENSE)
