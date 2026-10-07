@@ -1,13 +1,35 @@
+# Requires official Foundry >= 1.8.0 (native Monad support). Check with ./scripts/check-foundry.sh
+# Docs: https://docs.monad.xyz/tooling-and-infra/toolkits/foundry
+
 [profile.default]
 src = "src"
 out = "out"
 libs = ["lib"]
+remappings = [
+    "forge-std/=lib/forge-std/src/",
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+]
 metadata = true
 metadata_hash = "none"  # disable ipfs
 use_literal_content = true # use source code
 
-# Monad Configuration
-eth-rpc-url="https://testnet-rpc.monad.xyz"
+# Monad execution environment: local forge test/script, cast and chisel use Monad's
+# gas model, opcode pricing, precompiles and 128 KB contract size limit.
+# The hardfork defaults to the latest (MonadTen) and is auto-selected when forking a live network.
+network = "monad"
+
+# Monad Testnet (default target)
+eth-rpc-url = "https://testnet-rpc.monad.xyz"
 chain_id = 10143
+
+# Monad Mainnet: FOUNDRY_PROFILE=mainnet forge script ... (inherits everything else from default)
+[profile.mainnet]
+eth-rpc-url = "https://rpc.monad.xyz"
+chain_id = 143
+
+# Named endpoints, usable as --rpc-url monad_testnet / monad_mainnet or vm.createFork("monad_testnet")
+[rpc_endpoints]
+monad_testnet = "https://testnet-rpc.monad.xyz"
+monad_mainnet = "https://rpc.monad.xyz"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

@@ -5,14 +5,8 @@ on:
   pull_request:
   workflow_dispatch:
 
-env:
-  FOUNDRY_PROFILE: ci
-
 jobs:
-  check:
-    strategy:
-      fail-fast: true
-
+  contracts:
     name: Foundry project
     runs-on: ubuntu-latest
     steps:
@@ -20,24 +14,21 @@ jobs:
         with:
           submodules: recursive
 
+      # Official Foundry >= 1.8 ships native Monad execution (network = "monad" in foundry.toml)
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.8.5
 
-      - name: Show Forge version
-        run: |
-          forge --version
+      - name: Check Foundry version
+        run: ./scripts/check-foundry.sh
 
       - name: Run Forge fmt
-        run: |
-          forge fmt --check
-        id: fmt
+        run: forge fmt --check
 
       - name: Run Forge build
-        run: |
-          forge build --sizes
-        id: build
+        run: forge build --sizes
 
       - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
+        run: forge test -vvv
+
