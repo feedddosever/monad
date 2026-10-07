@@ -9,9 +9,7 @@ remappings = [
     "forge-std/=lib/forge-std/src/",
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
 ]
-metadata = true
-metadata_hash = "none"  # disable ipfs
-use_literal_content = true # use source code
+use_literal_content = true # embed source in metadata (helps Sourcify verification)
 
 # Monad execution environment: local forge test/script, cast and chisel use Monad's
 # gas model, opcode pricing, precompiles and 128 KB contract size limit.
