@@ -29,8 +29,11 @@ jobs:
       - name: Run Forge build
         run: forge build --sizes
 
+      # Empty RPC = run on the local Monad EVM instead of forking testnet (fast, no public-RPC dependency)
       - name: Run Forge tests
         run: forge test -vvv
+        env:
+          FOUNDRY_ETH_RPC_URL: ""
 
   app:
     name: Next.js app

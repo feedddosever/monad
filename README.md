@@ -89,7 +89,8 @@ cd <repo>
 cp .env.example .env
 
 forge build
-forge test
+forge test                       # forks live Monad Testnet (eth-rpc-url in foundry.toml)
+FOUNDRY_ETH_RPC_URL= forge test  # local Monad EVM, no RPC: fast, works offline (what CI runs)
 ```
 
 Deploy with an encrypted keystore (never a raw private key):
