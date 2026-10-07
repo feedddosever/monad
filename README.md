@@ -3,11 +3,11 @@
 > One-line pitch. TODO
 
 Built for the [Monad Metropolis hackathon](https://hackathon.monad.xyz) (Sept 1 to Oct 13, 2026).
-Submission checklist: [docs/rules-checklist.md](docs/rules-checklist.md).
+Spec: [docs/spec.md](docs/spec.md). Submission checklist: [docs/rules-checklist.md](docs/rules-checklist.md).
 
 | | |
 |---|---|
-| Track | TODO (exactly one, see [Track](#track)) |
+| Track | Onchain Finance & Trading |
 | Network | Monad Testnet (10143) / Monad Mainnet (143) |
 | Demo video | TODO link (3:00 max) |
 | Live app | TODO link (optional) |
@@ -21,7 +21,7 @@ TODO: who has the problem, what it costs them today, why existing solutions fall
 
 Competing in exactly one track:
 
-- [ ] Onchain Finance & Trading
+- [x] Onchain Finance & Trading
 - [ ] Consumer Products & Payments
 - [ ] Social, Attention & Culture
 - [ ] Trust, Identity & AI Infrastructure
