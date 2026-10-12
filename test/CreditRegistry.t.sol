@@ -227,6 +227,12 @@ contract CreditRegistryTest is Test {
         assertEq(registry.term(), TERM);
     }
 
+    function test_RevertWhen_PoolIsZero() public {
+        CreditRegistry fresh = new CreditRegistry(address(this), vm.addr(attestorKey), Params.registry());
+        vm.expectRevert(CreditRegistry.InvalidParams.selector);
+        fresh.setPool(address(0));
+    }
+
     function test_RevertWhen_PoolSetTwice() public {
         vm.expectRevert(CreditRegistry.PoolAlreadySet.selector);
         registry.setPool(alice);

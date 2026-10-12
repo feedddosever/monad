@@ -205,19 +205,21 @@ contract CreditPool is ERC4626, Ownable2Step, ReentrancyGuard {
         Loan memory loan = loans[borrower];
         if (loan.kind == Kind.None) revert NoLoan();
         if (block.timestamp <= loan.due + Math.ceilDiv(rateParams.grace, timeScale)) revert NotDefaultable();
-        _accrue();
-        (uint256 baseInterest, uint256 riskInterest) =
-            _interest(loan, (block.timestamp - loan.start) * timeScale, Math.Rounding.Floor);
 
+        // Price the collateral before any state changes (the oracle is the only external call before effects).
         uint256 recovered;
         if (loan.kind == Kind.Stable) {
             if (msg.value != 0) revert WrongFee();
             recovered = loan.collateral;
-            stableCollateral -= loan.collateral;
         } else {
             uint256 price = _readPrice(priceUpdate);
             recovered = Math.mulDiv(_monValue(loan.collateral, price), WAD - rateParams.liqBonus, WAD);
         }
+
+        _accrue();
+        (uint256 baseInterest, uint256 riskInterest) =
+            _interest(loan, (block.timestamp - loan.start) * timeScale, Math.Rounding.Floor);
+        if (loan.kind == Kind.Stable) stableCollateral -= loan.collateral;
 
         // Waterfall: LPs' booked value first, then the premium owed to the reserve, then the borrower.
         uint256 lpOwed = loan.principal + baseInterest;

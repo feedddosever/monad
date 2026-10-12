@@ -43,3 +43,21 @@ library Params {
         });
     }
 }
+
+/// @notice Explicit per-transaction gas limits. Monad charges the gas LIMIT, not gas used, so these are
+///         tight: max execution gas from `forge test --gas-report` (Monad gas model) + 21,000 intrinsic,
+///         plus ~20% headroom, rounded up. See docs/gas-report.md. Contract creations can't take an explicit
+///         gas option in Solidity; scripts pass `--gas-estimate-multiplier 120` for those.
+library GasLimits {
+    uint256 internal constant APPROVE = 90_000; // 53,027 measured
+    uint256 internal constant MINT = 125_000; // 80,700
+    uint256 internal constant SET_POOL = 90_000; // 51,689
+    uint256 internal constant FUND_RESERVE = 155_000; // 107,521
+    uint256 internal constant DEPOSIT = 230_000; // 166,343
+    uint256 internal constant WITHDRAW = 145_000; // 99,459
+    uint256 internal constant BORROW_STABLE = 370_000; // 285,918
+    uint256 internal constant REPAY = 265_000; // 196,762
+    uint256 internal constant MARK_DEFAULT = 355_000; // 273,728 (stable loan)
+    uint256 internal constant SUBMIT_ATTESTATION = 130_000; // 85,033
+    uint256 internal constant SEND_MON = 21_000; // plain transfer to an EOA is exactly 21,000
+}

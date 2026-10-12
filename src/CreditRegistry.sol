@@ -206,6 +206,7 @@ contract CreditRegistry is ICreditRegistry, Ownable2Step, EIP712 {
 
     function setPool(address pool_) external onlyOwner {
         if (pool != address(0)) revert PoolAlreadySet();
+        if (pool_ == address(0)) revert InvalidParams();
         pool = pool_;
         emit PoolSet(pool_);
     }
