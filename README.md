@@ -111,7 +111,7 @@ FOUNDRY_ETH_RPC_URL= forge test --gas-report
 ### Deploy and seed the demo (Monad Testnet)
 
 ```shell
-cp .env.example .env                 # set PRIVATE_KEY to a funded, testnet-only key
+cp .env.example .env                 # set PRIVATE_KEY to a funded, testnet-only key (or export it)
 scripts/deploy-testnet.sh            # deploy, verify on Sourcify, write deployments/testnet.json + README table
 scripts/seed-demo.sh                 # ~3-4 min: good payer, new wallet, late payer
 ```
