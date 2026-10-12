@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Monad Metropolis",
-  description: "Monad Metropolis hackathon project",
+  title: "Monad Credit",
+  description: "Undercollateralised lending priced on onchain credit history, on Monad.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
