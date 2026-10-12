@@ -133,7 +133,12 @@ contract SeedDemo is Script {
         vm.serializeAddress(key, good.label, good.addr);
         vm.serializeAddress(key, fresh.label, fresh.addr);
         string memory json = vm.serializeAddress(key, late.label, late.addr);
-        vm.writeJson(json, "deployments/demo-wallets.json");
+        vm.writeJson(
+            json,
+            block.chainid == 10143
+                ? "deployments/demo-wallets.json"
+                : string.concat("deployments/", vm.toString(block.chainid), "-demo-wallets.json")
+        );
     }
 
     function deploymentPath() public view returns (string memory) {

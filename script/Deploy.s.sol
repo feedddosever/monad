@@ -15,6 +15,9 @@ import {GasLimits, Params} from "./Params.sol";
 ///
 ///   scripts/deploy-testnet.sh        # broadcast with gas headroom, verify on Sourcify, collect tx hashes
 ///
+/// Local fork: foundry.toml pins chain_id = 10143, which also overrides block.chainid, so run local scripts with
+/// FOUNDRY_CHAIN_ID=31337 (writes deployments/31337.json, gitignored) or they would overwrite the testnet files.
+///
 /// Signer: PRIVATE_KEY from .env if set (read in-script, never printed), else the --account keystore.
 /// Optional env: ATTESTOR_ADDRESS (default: deployer), TIME_SCALE (default 43,200), PYTH_ADDRESS,
 /// MON_USD_FEED, RESERVE_SEED (default 1,000 mUSDC), LIQUIDITY_SEED (default 10,000 mUSDC).
