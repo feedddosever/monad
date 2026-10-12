@@ -3,6 +3,7 @@ pragma solidity ^0.8.24;
 
 import {Test} from "forge-std/Test.sol";
 import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {CreditPool} from "../src/CreditPool.sol";
 import {CreditRegistry} from "../src/CreditRegistry.sol";
 import {MonPriceOracle} from "../src/MonPriceOracle.sol";
@@ -320,6 +321,142 @@ contract CreditPoolTest is Test {
         assertTrue(registry.isBarred(bob));
         assertEq(pool.reserve(), 1_000e6, "fully recovered, reserve untouched");
         _assertBooks();
+    }
+
+    // ---------------------------------------------------------------- remaining entry points
+
+    function test_QuoteMatchesBorrow() public {
+        _borrowAndRepayAtTerm(alice, 100e6);
+        CreditPool.Quote memory q = pool.quote(alice, 150e6);
+        assertEq(q.apr, q.baseRate + q.premium);
+        assertEq(q.limit, 150e6);
+        vm.prank(alice);
+        pool.borrowStable(150e6, q.apr);
+        (, uint128 collateral,,,, uint64 baseRate, uint64 premium,) = pool.loans(alice);
+        assertEq(collateral, q.collateralValue);
+        assertEq(baseRate, q.baseRate);
+        assertEq(premium, q.premium);
+    }
+
+    function test_DebtOfMatchesRepay() public {
+        (uint256 none,,) = pool.debtOf(alice);
+        assertEq(none, 0);
+        vm.prank(alice);
+        pool.borrowStable(100e6, MAX_APR);
+        skip(TERM_REAL / 2);
+        (uint256 total, uint256 baseInterest, uint256 riskInterest) = pool.debtOf(alice);
+        assertEq(total, 100e6 + baseInterest + riskInterest);
+        uint256 before = usdc.balanceOf(alice);
+        vm.prank(alice);
+        pool.repay();
+        assertEq(before - usdc.balanceOf(alice), total - 100e6, "paid debt, got collateral back");
+    }
+
+    function test_Utilization() public {
+        assertEq(pool.utilization(), 0);
+        vm.prank(alice);
+        pool.borrowStable(100e6, MAX_APR);
+        assertEq(pool.utilization(), uint256(100e6) * WAD / 50_000e6);
+    }
+
+    function test_MintRedeemAndMaxRedeem() public {
+        vm.startPrank(keeper);
+        uint256 shares = pool.previewDeposit(1_000e6);
+        uint256 assets = pool.mint(shares, keeper);
+        assertEq(assets, 1_000e6);
+        assertEq(pool.redeem(pool.balanceOf(keeper), keeper, keeper), 1_000e6);
+        vm.stopPrank();
+
+        vm.prank(alice);
+        pool.borrowStable(100e6, MAX_APR);
+        assertEq(pool.maxRedeem(lender), pool.convertToShares(pool.lpCash()), "redeem capped at idle cash");
+    }
+
+    function test_FundReserve() public {
+        vm.expectEmit(true, false, false, true, address(pool));
+        emit CreditPool.ReserveFunded(keeper, 5e6);
+        vm.prank(keeper);
+        pool.fundReserve(5e6);
+        assertEq(pool.reserve(), 1_005e6);
+        _assertBooks();
+    }
+
+    function test_RevertWhen_RateParamsOutOfBounds() public {
+        CreditPool.RateParams memory p = defaultRates();
+        p.reserveLeverage = 3e18 + 1;
+        vm.expectRevert(CreditPool.InvalidParams.selector);
+        pool.setRateParams(p);
+        p = defaultRates();
+        p.liqBonus = 0.21e18;
+        vm.expectRevert(CreditPool.InvalidParams.selector);
+        pool.setRateParams(p);
+    }
+
+    function test_RevertWhen_AdminCalledByStranger() public {
+        vm.startPrank(alice);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        pool.setBorrowingPaused(true);
+        vm.expectRevert(abi.encodeWithSelector(Ownable.OwnableUnauthorizedAccount.selector, alice));
+        pool.setRateParams(defaultRates());
+        vm.stopPrank();
+    }
+
+    function test_PauseNeverBlocksExits() public {
+        vm.prank(alice);
+        pool.borrowStable(100e6, MAX_APR);
+        pool.setBorrowingPaused(true);
+        skip(TERM_REAL);
+        vm.prank(alice);
+        pool.repay();
+        vm.prank(lender);
+        pool.withdraw(1_000e6, lender, lender);
+    }
+
+    function test_RevertWhen_NoLoan() public {
+        vm.prank(alice);
+        vm.expectRevert(CreditPool.NoLoan.selector);
+        pool.repay();
+        vm.expectRevert(CreditPool.NoLoan.selector);
+        pool.markDefault(alice, new bytes[](0));
+        vm.expectRevert(CreditPool.NotMonLoan.selector);
+        pool.liquidate(alice, new bytes[](0));
+    }
+
+    function test_RevertWhen_LiquidatingStableLoan() public {
+        vm.prank(alice);
+        pool.borrowStable(100e6, MAX_APR);
+        vm.expectRevert(CreditPool.NotMonLoan.selector);
+        pool.liquidate(alice, new bytes[](0));
+    }
+
+    function test_RevertWhen_FeeMismatch() public {
+        vm.prank(bob);
+        pool.borrowStable(100e6, MAX_APR);
+        skip(TERM_REAL + GRACE_REAL + 1);
+        vm.expectRevert(CreditPool.WrongFee.selector);
+        pool.markDefault{value: 1}(bob, new bytes[](0)); // stable loans take no fee
+
+        _borrowMon(alice, 1e6, 50e18);
+        bytes[] memory update = _priceUpdate(2_000_000);
+        vm.prank(keeper);
+        vm.expectRevert(CreditPool.WrongFee.selector);
+        pool.liquidate{value: PYTH_FEE + 1}(alice, update);
+
+        vm.prank(keeper);
+        vm.expectRevert(CreditPool.InsufficientCollateral.selector);
+        pool.borrowMon{value: PYTH_FEE}(1e6, MAX_APR, update); // nothing left over for collateral
+    }
+
+    function test_SurplusFromMonDefaultGoesToBorrower() public {
+        _borrowMon(bob, 1e6, 60e18);
+        skip(TERM_REAL + GRACE_REAL + 1);
+        uint256 bobBefore = usdc.balanceOf(bob);
+        (uint256 debt,,) = pool.debtOf(bob);
+        bytes[] memory update = _priceUpdate(MON_PRICE);
+        vm.prank(keeper);
+        pool.markDefault{value: PYTH_FEE}(bob, update);
+        // 1.425 recovered; first loan has no premium, so LPs take principal + base interest and bob gets the rest
+        assertApproxEqAbs(usdc.balanceOf(bob) - bobBefore, 1.425e6 - debt, 2);
     }
 
     // ---------------------------------------------------------------- properties

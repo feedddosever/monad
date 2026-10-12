@@ -21,6 +21,11 @@ network = "monad"
 eth-rpc-url = "https://testnet-rpc.monad.xyz"
 chain_id = 10143
 
+[profile.default.invariant]
+runs = 128
+depth = 100
+fail_on_revert = true # handler pre-checks every action; any pool revert is a bug
+
 # Monad Mainnet: FOUNDRY_PROFILE=mainnet forge script ... (inherits everything else from default)
 [profile.mainnet]
 eth-rpc-url = "https://rpc.monad.xyz"
