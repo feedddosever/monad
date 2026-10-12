@@ -38,9 +38,9 @@ user -> app (Next.js + viem) -> contracts on Monad
 
 | Component | Path | Description |
 |---|---|---|
-| Contracts | `src/` | TODO |
-| Deploy scripts | `script/` | TODO |
-| Tests | `test/` | TODO |
+| Contracts | `src/` | `CreditRegistry` (history, score, attestations), `CreditPool` (ERC-4626 pool and loans), `MonPriceOracle` (Pyth MON/USD), `MockUSDC` (testnet faucet token) |
+| Deploy scripts | `script/` | `Deploy.s.sol` (deploys, seeds reserve and liquidity, writes `deployments/<chainId>.json`); `Params.sol` (spec parameters) |
+| Tests | `test/` | Unit, fuzz and waterfall tests for the registry and pool |
 | Frontend | `app/` | Next.js + viem (`monadTestnet`) |
 
 ## Why Monad
@@ -100,10 +100,10 @@ cast wallet import monad-deployer --interactive   # name must match ETH_KEYSTORE
 cast wallet address --account monad-deployer      # fund this address from the faucet
 
 # Monad Testnet (default profile)
-forge script script/<Script>.s.sol --broadcast
+forge script script/Deploy.s.sol --broadcast   # about 15M gas, 1.5–3 MON
 
 # Monad Mainnet
-FOUNDRY_PROFILE=mainnet forge script script/<Script>.s.sol --broadcast
+FOUNDRY_PROFILE=mainnet TIME_SCALE=1 forge script script/Deploy.s.sol --broadcast
 ```
 
 Verify on MonadVision (Sourcify, no API key):

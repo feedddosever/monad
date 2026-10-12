@@ -10,6 +10,7 @@ remappings = [
     "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
 ]
 use_literal_content = true # embed source in metadata (helps Sourcify verification)
+fs_permissions = [{ access = "read-write", path = "./deployments" }] # Deploy.s.sol writes addresses here
 
 # Monad execution environment: local forge test/script, cast and chisel use Monad's
 # gas model, opcode pricing, precompiles and 128 KB contract size limit.
