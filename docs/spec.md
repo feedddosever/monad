@@ -27,7 +27,7 @@ One lender pool; collateral in mUSDC or MON. Each on-time repayment lowers a bor
 E &= \textstyle\sum_{k\ \text{on time}} \min\!\left(1,\ \frac{P_k\,\tau_k}{\bar P\,\bar T}\right) && \text{history in reference-loan units}\\
 PD &= \frac{b + F}{a + gA + E + b + F}, \quad F = \tfrac12\left(n_{\text{late}} + n_{\text{liq}} + n_{\text{extLiq}}\right), \quad A = \min\!\left(1, \tfrac{\text{age}}{1\,\text{yr}}\right) && \text{Beta}(a,b)\text{ posterior mean}\\
 c &= 1 \text{ if } E < 1, \text{ else } c_{\min} + (1 - c_{\min})\min\!\left(1, PD/PD_0\right), \quad PD_0 = \tfrac{b}{a+b} && \text{collateral ratio}\\
-APR &= \underbrace{r_0 + r_1 U}_{\text{to LPs}} + \underbrace{PD\,(1-c)/T}_{\text{to reserve}}, \qquad L = \min(L_{\max},\ L_0 + mV) && V = \text{repaid principal}
+APR &= \underbrace{r_0 + r_1 U}_{\text{to LPs}} + \underbrace{PD\,(1-c)/T}_{\text{to reserve}}, \qquad L = \min(L_{\max},\ L_0 + mV) && V = \text{time-weighted repaid principal}
 \end{aligned}
 ```
 
