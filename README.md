@@ -35,7 +35,7 @@ Borrowers start fully collateralised. Every loan repaid on time lowers their est
 
 | | |
 |---|---|
-| History | E = Σ over on-time loans of min(1, principal × time held / (100 mUSDC × 30 days)) |
+| History | E = Σ over on-time loans of min(1, principal × time held / (100 mUSDC × 30 days)); a loan repaid after at least ¾ of its term counts as held for all of it |
 | Default probability | PD = (b + ½·(late + liquidations)) / (a + g·wallet-age + E + b + ½·(late + liquidations)): the mean of a Beta prior updated by your history |
 | Score | 1000 × (1 − PD) |
 | Collateral ratio | 100% until one full loan is repaid, then linear in PD, down to a 25% floor |
@@ -59,7 +59,7 @@ lender ──deposit──▶ CreditPool (ERC-4626) ◀──borrow / repay─�
 | `MonPriceOracle` | [`src/MonPriceOracle.sol`](src/MonPriceOracle.sol) | Pyth MON/USD pull-oracle adapter (max age 60 s, confidence ≤ 2%) |
 | `MockUSDC` | [`src/MockUSDC.sol`](src/MockUSDC.sol) | Testnet stablecoin with a capped faucet |
 | Scripts | [`script/`](script), [`scripts/`](scripts) | Deploy and demo seeding with explicit gas limits; address and tx-hash collection |
-| Tests | [`test/`](test) | 71 unit, fuzz and invariant tests ([summary](#tests)) |
+| Tests | [`test/`](test) | 74 unit, fuzz and invariant tests ([summary](#tests)) |
 | App | [`app/`](app) | Three screens: your score and why → borrow within your limit → repay and watch your terms change |
 
 ## Why Monad
@@ -132,7 +132,7 @@ The app reads contract addresses from `app/src/lib/deployment.json`, which the d
 
 ### Tests
 
-71 tests: unit tests for every external function, fuzz tests that check score → collateral, rate and limit against the spec formulas, and an invariant campaign (128 runs × 100 random calls, `fail_on_revert`). The invariants check that stablecoin books balance, that debt is funded only by lender capital (never the reserve or collateral), that no open loan exceeds its limit, that on-time repayments never lower a score, and that lender share price never falls while the reserve covers defaults. Static analysis (slither 0.11.6): every high and medium finding is fixed or justified in [docs/security-notes.md](docs/security-notes.md).
+74 tests: unit tests for every external function, fuzz tests that check score → collateral, rate and limit against the spec formulas, and an invariant campaign (128 runs × 100 random calls, `fail_on_revert`). The invariants check that stablecoin books balance, that debt is funded only by lender capital (never the reserve or collateral), that no open loan exceeds its limit, that on-time repayments never lower a score, and that lender share price never falls while the reserve covers defaults. Static analysis (slither 0.11.6): every high and medium finding is fixed or justified in [docs/security-notes.md](docs/security-notes.md).
 
 ## Demo video
 

@@ -24,7 +24,7 @@ Low findings, all accepted:
 
 ## Tests behind these claims
 
-71 tests, including fuzzing and an invariant campaign (128 runs × 100 calls, `fail_on_revert = true`) across lenders, 6 borrowers and a keeper. It checks that stablecoin books balance; that debt is funded only by LP capital and the reserve only pays for defaults; that aggregates equal the sum of open loans; that no open loan exceeds its limit; that on-time repayments never lower a score; and that LP share price never falls while the reserve covers defaults.
+74 tests, including fuzzing and an invariant campaign (128 runs × 100 calls, `fail_on_revert = true`) across lenders, 6 borrowers and a keeper. It checks that stablecoin books balance; that debt is funded only by LP capital and the reserve only pays for defaults; that aggregates equal the sum of open loans; that no open loan exceeds its limit; that on-time repayments never lower a score; and that LP share price never falls while the reserve covers defaults.
 
 ## Trust assumptions and known risks
 
