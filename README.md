@@ -136,7 +136,9 @@ The app reads contract addresses from `app/src/lib/deployment.json`, which the d
 
 ## Demo video
 
-TODO (author): public link (YouTube / Loom / Vimeo), **3:00 max**. Script: [docs/demo-script.md](docs/demo-script.md).
+TODO (author): public link (YouTube / Loom / Vimeo), **3:00 max**.
+
+The video is generated from the live app by [`video/`](video): narrated slides, then a fresh wallet connecting, borrowing, waiting for full history credit, repaying and watching its terms change, then the seeded profiles. See [video/README.md](video/README.md) to re-record it on Monad Testnet. A shot list for recording by hand is in [docs/demo-script.md](docs/demo-script.md).
 
 ## AI tools used
 
@@ -144,7 +146,8 @@ This project was built with AI coding assistance, disclosed as the hackathon rul
 
 | Tool | Used for |
 |---|---|
-| [Claude Code](https://claude.com/claude-code) (Anthropic) | Most of the code and docs in this repository, written from the author's instructions: repository scaffolding (Foundry, Next.js, CI); the spec, built around design decisions the author made (track, both collateral types, signed wallet-age attestations, bounded loss with a first-loss reserve, one pool with fixed-term loans); the Solidity contracts, tests, fuzz and invariant suites; the deploy and seed scripts; the gas report and slither triage; the frontend; and the submission docs. |
+| [Claude Code](https://claude.com/claude-code) (Anthropic) | Most of the code and docs in this repository, written from the author's instructions: repository scaffolding (Foundry, Next.js, CI); the spec, built around design decisions the author made (track, both collateral types, signed wallet-age attestations, bounded loss with a first-loss reserve, one pool with fixed-term loans); the Solidity contracts, tests, fuzz and invariant suites; the deploy and seed scripts; the gas report and slither triage; the frontend; the submission docs; and the demo-video tooling and narration script. |
+| [Piper](https://github.com/rhasspy/piper) (open-source TTS, run locally) | The synthetic narration voice in the demo video |
 
 ## Built during the hackathon (Sept 1 to Oct 13)
 

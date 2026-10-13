@@ -1,0 +1,70 @@
+{
+ "intro": {
+  "tts": "On-chain lending only works if you're already rich. Every major market wants well over a hundred percent collateral, so a borrower with a perfect record gets the same terms as a wallet made five minutes ago. Repayment history is public. Nobody prices it. Monad Credit does.",
+  "caption": ""
+ },
+ "model": {
+  "tts": "Here's the model. Your chance of default is a Bayesian estimate: a cautious prior, updated by every loan you repay on time, and by any late payment or liquidation. Your score sets three terms: collateral, from a hundred percent down to twenty-five; a risk premium, the fair price of the part you don't collateralise; and a credit limit that grows as you repay.",
+  "caption": ""
+ },
+ "connect": {
+  "tts": "Let's try it live, with a brand-new wallet.",
+  "caption": "Let's try it live, with a brand-new wallet."
+ },
+ "switch": {
+  "tts": "Wrong network? The app switches it for me.",
+  "caption": "Wrong network? The app switches it for me."
+ },
+ "credit": {
+  "tts": "Everyone starts at eight hundred, and the app says why, in plain language: no history yet, no late payments, no verified wallet age. So my first loan is fully secured: a hundred-dollar limit, at just the pool rate.",
+  "caption": "Everyone starts at 800, and the app says why in plain language. No history yet, so my first loan is fully secured: a 100 mUSDC limit at just the pool rate."
+ },
+ "borrow": {
+  "tts": "The borrow screen shows exactly what I post, what it costs, and when it's due.",
+  "caption": "The borrow screen shows exactly what I post, what it costs, and when it's due."
+ },
+ "borrowtx": {
+  "tts": "Approve, then borrow. Each call carries an explicit gas limit, because Monad charges the limit, not the gas used.",
+  "caption": "Approve, then borrow. Each call carries an explicit gas limit, because Monad charges the limit, not the gas used."
+ },
+ "loan1": {
+  "tts": "The loan is live. Interest accrues every second, since Monad makes a block every third of a second. On our demo clock, a second is twelve hours, so this thirty-day loan lasts one minute.",
+  "caption": "Interest accrues every second: Monad makes a block every 0.3 s. On the demo clock 1 s = 12 h, so this 30-day loan lasts one minute."
+ },
+ "loan2": {
+  "tts": "History is time-weighted, so borrowing and instantly repaying earns nothing. Hold a loan for three quarters of its term, and it counts in full.",
+  "caption": "History is time-weighted: an instant borrow-and-repay earns nothing. Hold a loan for ¾ of its term and it counts in full."
+ },
+ "loan3": {
+  "tts": "Lenders are protected twice. If I missed the due date plus three days of grace, anyone could mark me in default. My collateral pays first, then a reserve funded by risk premiums, and only then the lenders.",
+  "caption": "Miss the due date plus 3 days of grace and anyone can mark a default. Collateral pays first, then the reserve funded by risk premiums, and only then lenders."
+ },
+ "repay": {
+  "tts": "Full history credit. I repay.",
+  "caption": "Full history credit. I repay."
+ },
+ "changed": {
+  "tts": "Same transaction, new terms. My score goes from eight hundred to eight eighty-eight, my collateral drops from a hundred to sixty-seven percent, and my limit rises to a hundred and fifty. No epochs. No off-chain jobs.",
+  "caption": "Same transaction, new terms: score 800 → 888, collateral 100% → 67%, limit 100 → 150. No epochs, no offchain jobs."
+ },
+ "good": {
+  "tts": "A wallet with three on-time loans scores nine forty-one, and posts under half the collateral.",
+  "caption": "Three on-time loans: 941, posting under half the collateral."
+ },
+ "late": {
+  "tts": "One late payment: five seventy-one, and fully secured again. Same formula, public inputs.",
+  "caption": "One late payment: 571, fully secured again. Same formula, public inputs."
+ },
+ "monad": {
+  "tts": "Why Monad? Blocks every third of a second, so debts and scores update live. A full borrow-and-repay cycle costs about a sixth of a cent in gas, so small credit-building loans make sense. And the whole pool ships as one twenty-seven-kilobyte contract, beyond Ethereum's size limit.",
+  "caption": ""
+ },
+ "next": {
+  "tts": "Next: wallet-age attestations, MON collateral with Pith prices, and lender tranches. Monad Credit: your history is your collateral.",
+  "caption": ""
+ },
+ "loan4": {
+  "tts": "Lenders, meanwhile, earn the pool rate through a standard vault, and their share price rises every second.",
+  "caption": "Lenders earn the pool rate through an ERC-4626 vault; their share price rises every second."
+ }
+}

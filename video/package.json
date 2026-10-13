@@ -1,0 +1,10 @@
+{
+  "name": "monad-credit-demo-video",
+  "private": true,
+  "type": "module",
+  "description": "Records the demo video from the live app (see README.md)",
+  "dependencies": {
+    "playwright-core": "1.64.0",
+    "viem": "2.57.3"
+  }
+}

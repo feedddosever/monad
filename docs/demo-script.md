@@ -1,5 +1,7 @@
 # Demo video script (2:40, hard cap 3:00)
 
+This is the shot list for recording by hand. An automated, narrated version of the same flow is produced by [`video/`](../video/README.md), with its narration in `video/narration.json`.
+
 Recording setup: app at 560 px wide next to a MonadVision tab, a wallet holding testnet MON, and a fresh wallet for the live flow. Have the seeded `good-payer` and `late-payer` addresses from `deployments/testnet.json` ready to paste. The demo clock runs 1 s = 12 h, so a 30-day loan lasts 60 s.
 
 | Time | Screen | Voiceover |

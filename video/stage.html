@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --bg: #0f0c1d; --panel: #1a1530; --ink: #f4f2ff; --muted: #a9a3c7; --accent: #8b5cf6; --accent2: #c4b5fd; --good: #34d399; --bad: #fb7185; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); color: var(--ink);
+    font-family: "Noto Sans", "Liberation Sans", "DejaVu Sans", sans-serif; }
+  .layer { position: absolute; inset: 0; opacity: 0; transition: opacity 450ms ease; pointer-events: none; }
+  .layer.on { opacity: 1; pointer-events: auto; }
+  .glow { position: absolute; width: 1100px; height: 1100px; border-radius: 50%; filter: blur(140px); opacity: .35;
+    background: radial-gradient(circle, #6d28d9 0%, transparent 65%); right: -300px; top: -350px; }
+  .slide { position: absolute; inset: 0; padding: 90px 140px 120px; display: flex; flex-direction: column; justify-content: center; }
+  .kicker { color: var(--accent2); font-size: 30px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+  h1 { font-size: 120px; line-height: 1.02; font-weight: 800; letter-spacing: -0.02em; margin-top: 18px; }
+  h2 { font-size: 76px; line-height: 1.08; font-weight: 800; letter-spacing: -0.01em; margin-top: 14px; }
+  .sub { font-size: 40px; color: var(--muted); margin-top: 26px; max-width: 1400px; line-height: 1.3; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-top: 90px; }
+  .card { background: var(--panel); border: 1px solid #2c2550; border-radius: 28px; padding: 40px 44px; }
+  .card .big { font-size: 68px; font-weight: 800; color: var(--ink); }
+  .card .big.accent { color: var(--accent2); }
+  .card p { font-size: 32px; color: var(--muted); margin-top: 12px; line-height: 1.3; }
+  .formula { margin-top: 44px; background: var(--panel); border: 1px solid #2c2550; border-radius: 28px; padding: 40px 52px; }
+  .eq { font-family: "Noto Serif", "DejaVu Serif", serif; font-size: 58px; display: flex; align-items: center; gap: 26px; }
+  .eq i { color: var(--accent2); }
+  .frac { display: inline-flex; flex-direction: column; align-items: center; font-size: 50px; }
+  .frac span:first-child { border-bottom: 3px solid var(--ink); padding: 0 14px 6px; }
+  .frac span:last-child { padding-top: 6px; }
+  .legend { font-size: 28px; color: var(--muted); margin-top: 22px; line-height: 1.5; }
+  .legend b { color: var(--ink); font-weight: 600; }
+  .terms { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 36px; }
+  .terms .card .big { font-size: 52px; }
+  .foot { position: absolute; left: 140px; right: 140px; bottom: 54px; font-size: 24px; color: #7d77a0; display: flex; justify-content: space-between; }
+  /* app mode */
+  #appwrap { position: absolute; left: 150px; top: 33px; width: 728px; height: 1014px;
+    border-radius: 28px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08); background: #fff; }
+  #app { width: 728px; height: 1014px; border: 0; display: block; background: #fff; }
+  #side { position: absolute; left: 1010px; right: 110px; top: 0; bottom: 0; display: flex; flex-direction: column; justify-content: center; }
+  #step { display: inline-flex; align-self: flex-start; background: rgba(139,92,246,.18); color: var(--accent2); border: 1px solid rgba(196,181,253,.35);
+    padding: 10px 22px; border-radius: 999px; font-size: 28px; font-weight: 600; letter-spacing: .04em; }
+  #caption { font-size: 50px; line-height: 1.28; font-weight: 600; margin-top: 30px; min-height: 380px; transition: opacity 250ms; }
+  #badge { position: absolute; right: 110px; bottom: 54px; font-size: 24px; color: #8f89b3; }
+  #badge b { color: var(--good); }
+  #cursor { position: absolute; left: 0; top: 0; width: 34px; height: 34px; z-index: 50; pointer-events: none; opacity: 0;
+    transition: transform 700ms cubic-bezier(.4,.0,.2,1), opacity 300ms; }
+  #cursor.on { opacity: 1; }
+  #ring { position: absolute; z-index: 49; width: 70px; height: 70px; margin: -35px 0 0 -35px; border-radius: 50%;
+    border: 4px solid var(--accent); opacity: 0; pointer-events: none; }
+  #ring.pulse { animation: pulse 600ms ease-out; }
+  @keyframes pulse { 0% { opacity: .9; transform: scale(.4); } 100% { opacity: 0; transform: scale(1.4); } }
+  ul.next { list-style: none; margin-top: 44px; display: grid; gap: 26px; }
+  ul.next li { font-size: 44px; display: flex; gap: 22px; align-items: baseline; }
+  ul.next li::before { content: "→"; color: var(--accent2); }
+  .tag { font-size: 56px; font-weight: 800; color: var(--accent2); margin-top: 90px; }
+</style>
+</head>
+<body>
+  <div class="glow"></div>
+
+  <!-- 1. title + problem -->
+  <section class="layer" id="s-intro"><div class="slide">
+    <div class="kicker">Monad Metropolis · Onchain Finance &amp; Trading</div>
+    <h1>Monad Credit</h1>
+    <div class="sub">Undercollateralised loans, priced on your onchain repayment history.</div>
+    <div class="cards">
+      <div class="card"><div class="big">120–150%</div><p>collateral on today's major lending markets, for everyone</p></div>
+      <div class="card"><div class="big">Same terms</div><p>for a 100-loan record and a wallet made five minutes ago</p></div>
+      <div class="card"><div class="big accent">Public</div><p>repayment history sits onchain, and nobody prices it</p></div>
+    </div>
+  </div></section>
+
+  <!-- 2. credit model -->
+  <section class="layer" id="s-model"><div class="slide">
+    <div class="kicker">How your terms are set</div>
+    <div class="formula">
+      <div class="eq"><i>PD</i> = <span class="frac"><span><i>b</i> + <i>F</i></span><span><i>a</i> + <i>E</i> + <i>gA</i> + <i>b</i> + <i>F</i></span></span>
+        <span style="margin-left:60px"><i>Score</i> = 1000 · (1 − <i>PD</i>)</span></div>
+      <div class="legend"><b>E</b> on-time loans, time-weighted (full credit from ¾ of the term) · <b>F</b> ½ per late repayment or liquidation ·
+        <b>A</b> attested wallet age · prior <b>a</b> = 1, <b>b</b> = ¼, so everyone starts at 800</div>
+    </div>
+    <div class="terms">
+      <div class="card"><div class="big">Collateral</div><p>100% until one full loan is repaid, then falls with <i>PD</i> to a 25% floor</p></div>
+      <div class="card"><div class="big">Risk premium</div><p><i>PD</i> × the unsecured share, per loan: the fair price, paid into a first-loss reserve</p></div>
+      <div class="card"><div class="big">Credit limit</div><p>100 mUSDC + ½ of principal repaid on time, up to 5,000</p></div>
+    </div>
+  </div></section>
+
+  <!-- 3. live app -->
+  <section class="layer" id="s-app">
+    <div id="appwrap"><iframe id="app"></iframe></div>
+    <div id="side">
+      <div id="step">Live demo</div>
+      <div id="caption"></div>
+    </div>
+    <div id="badge"><b>●</b> Live app · <span class="net">Monad Testnet</span></div>
+  </section>
+
+  <!-- 4. why monad -->
+  <section class="layer" id="s-monad"><div class="slide">
+    <div class="kicker">Why Monad</div>
+    <h2>Credit that updates every block</h2>
+    <div class="cards">
+      <div class="card"><div class="big accent">0.30 s</div><p>average block time we measured over 100,000 blocks: debts, share price and scores move live</p></div>
+      <div class="card"><div class="big accent">≈ $0.0016</div><p>gas for a full borrow + repay at our explicit gas limits, so small credit-building loans pay off</p></div>
+      <div class="card"><div class="big accent">27.5 KB</div><p>the whole lending pool in one contract, over Ethereum's 24 KB cap and inside Monad's 128 KB</p></div>
+    </div>
+  </div></section>
+
+  <!-- 5. next -->
+  <section class="layer" id="s-next"><div class="slide">
+    <div class="kicker">What's next</div>
+    <ul class="next">
+      <li>Wallet-age and cross-protocol liquidation attestations in the app</li>
+      <li>MON collateral live, priced by Pyth</li>
+      <li>Senior and junior tranches for lenders</li>
+    </ul>
+    <div class="tag">Monad Credit: your history is your collateral.</div>
+    <div class="foot"><span>github.com/feedddosever/monad</span><span>Live segment: <span class="net">Monad Testnet</span> · Narration: synthetic voice (Piper TTS)</span></div>
+  </div></section>
+
+  <svg id="cursor" viewBox="0 0 24 24"><path d="M4 2 L4 20 L9 15 L12.5 22 L15.5 20.6 L12 13.8 L19 13.8 Z" fill="#fff" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/></svg>
+  <div id="ring"></div>
+
+<script>
+  const layers = ["s-intro", "s-model", "s-app", "s-monad", "s-next"];
+  window.show = (id) => layers.forEach((l) => document.getElementById(l).classList.toggle("on", l === id));
+  window.setStep = (step, text) => {
+    const c = document.getElementById("caption");
+    document.getElementById("step").textContent = step;
+    c.style.opacity = 0;
+    setTimeout(() => { c.textContent = text; c.style.opacity = 1; }, 180);
+  };
+  window.cursorTo = (x, y) => {
+    const el = document.getElementById("cursor");
+    el.classList.add("on");
+    el.style.transform = `translate(${x - 4}px, ${y - 2}px)`;
+  };
+  window.setNetwork = (label) => document.querySelectorAll(".net").forEach((el) => (el.textContent = label));
+  window.cursorHide = () => document.getElementById("cursor").classList.remove("on");
+  window.pulseAt = (x, y) => {
+    const r = document.getElementById("ring");
+    r.style.left = x + "px"; r.style.top = y + "px";
+    r.classList.remove("pulse"); void r.offsetWidth; r.classList.add("pulse");
+  };
+</script>
+</body>
+</html>
