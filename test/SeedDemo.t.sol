@@ -70,8 +70,9 @@ contract SeedDemoTest is Test {
         assertGt(fresh, late);
         assertEq(fresh, 800);
         assertLt(registry.terms(_wallet("good-payer")).collateralRatio, 1e18, "good payer is partly unsecured");
-        (,, uint32 goodLate,,,,,) = registry.records(_wallet("good-payer"));
+        (uint128 goodEarned,, uint32 goodLate,,,,,) = registry.records(_wallet("good-payer"));
         assertEq(goodLate, 0, "good payer never late");
+        assertEq(goodEarned, 3e18, "three loans held past 75% of the term earn full credit");
         assertEq(usdc.balanceOf(address(pool)), pool.lpCash() + pool.reserve() + pool.stableCollateral());
     }
 
@@ -80,7 +81,7 @@ contract SeedDemoTest is Test {
         (uint128 lateOpen,,,,,,,) = pool.loans(_wallet("late-payer"));
         (uint128 earned,,,,,,,) = registry.records(_wallet("good-payer"));
         (,, uint32 late,,,,,) = registry.records(_wallet("late-payer"));
-        return goodOpen == 0 && lateOpen == 0 && earned >= 2.4e18 && late >= 1;
+        return goodOpen == 0 && lateOpen == 0 && earned >= 3e18 && late >= 1;
     }
 
     function _wallet(string memory label) internal pure returns (address) {

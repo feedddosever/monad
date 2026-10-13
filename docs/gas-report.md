@@ -8,9 +8,9 @@ Monad charges `gas_limit × gas_price`, not gas used ([docs](https://docs.monad.
 
 | Call | Max gas used | Gas limit | Cost at limit (MON) | Cost (USD) |
 |---|---:|---:|---:|---:|
-| `CreditPool.borrowStable` | 285,918 | 370,000 | 0.0370 | $0.00095 |
+| `CreditPool.borrowStable` | 285,963 | 370,000 | 0.0370 | $0.00095 |
 | `CreditPool.repay` | 196,762 | 265,000 | 0.0265 | $0.00068 |
-| `CreditPool.markDefault` (stable) | 273,728 | 355,000 | 0.0355 | $0.00091 |
+| `CreditPool.markDefault` (stable) | 273,812 | 355,000 | 0.0355 | $0.00091 |
 | `CreditPool.deposit` | 166,343 | 230,000 | 0.0230 | $0.00059 |
 | `CreditPool.withdraw` | 99,459 | 145,000 | 0.0145 | $0.00037 |
 | `CreditPool.fundReserve` | 107,521 | 155,000 | 0.0155 | $0.00040 |

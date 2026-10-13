@@ -10,20 +10,25 @@ import {ICreditRegistry} from "./interfaces/ICreditRegistry.sol";
 
 /// @notice Credit history and scoring (docs/spec.md §2).
 ///
-///   E  = Σ_on-time min(1, P·τ / (P̄·T̄))                      history, in reference-loan units
+///   E  = Σ_on-time min(1, P·τ' / (P̄·T̄))                     history, in reference-loan units
+///        τ' = T̄ if τ ≥ ¾·T̄ else τ                              held fraction, full credit from 75% of the term
 ///   F  = w · (late + liquidations + extLiquidations)          failures, as pseudo-counts
 ///   A  = min(1, walletAge / 1 yr)                              attested
 ///   PD = (b + F) / (a + g·A + E + b + F)                       Beta(a, b) posterior mean
 ///   c  = 1 if E < 1, else cMin + (1 − cMin)·min(1, PD / PD0)   PD0 = b / (a + b)
 ///   premium = PD·(1 − c) / T,   limit = min(Lmax, L0 + m·V)
 ///
-/// V is principal repaid on time, weighted by the fraction of the term it was held, so instant
-/// borrow-repay loops grow neither E nor the limit. A default bars the address for good.
+/// V is principal repaid on time, weighted by the same held fraction, so instant borrow-repay loops grow
+/// neither E nor the limit, while repaying in the last quarter of the term costs nothing. A default bars
+/// the address for good.
 contract CreditRegistry is ICreditRegistry, Ownable2Step, EIP712 {
     using SafeCast for uint256;
 
     uint256 internal constant WAD = 1e18;
     uint256 internal constant YEAR = 365 days;
+
+    /// @notice Share of the term after which an on-time repayment counts as a fully held loan.
+    uint256 public constant FULL_CREDIT_SHARE = 0.75e18;
 
     bytes32 public constant ATTESTATION_TYPEHASH = keccak256(
         "Attestation(address borrower,uint64 firstTxTime,uint32 extLiquidations,uint64 issuedAt,uint64 deadline)"
@@ -139,6 +144,13 @@ contract CreditRegistry is ICreditRegistry, Ownable2Step, EIP712 {
         return p.cMin + Math.mulDiv(WAD - p.cMin, relative, WAD, Math.Rounding.Ceil);
     }
 
+    /// @notice History credit for a loan held `elapsed` protocol seconds: WAD (full) from 75% of the term,
+    ///         proportional below that.
+    function heldFractionOf(uint256 elapsed) public view returns (uint256) {
+        uint256 fraction = Math.mulDiv(elapsed, WAD, params.term);
+        return fraction >= FULL_CREDIT_SHARE ? WAD : fraction;
+    }
+
     function _ageFraction(uint64 firstTxTime) internal view returns (uint256) {
         if (firstTxTime == 0 || firstTxTime >= block.timestamp) return 0;
         return Math.min(WAD, (block.timestamp - firstTxTime) * WAD / YEAR);
@@ -153,7 +165,7 @@ contract CreditRegistry is ICreditRegistry, Ownable2Step, EIP712 {
             r.late += 1;
         } else {
             Params storage p = params;
-            uint256 heldFraction = Math.min(WAD, Math.mulDiv(elapsed, WAD, p.term));
+            uint256 heldFraction = heldFractionOf(elapsed);
             r.earned += Math.min(WAD, principal * heldFraction / p.refPrincipal).toUint128();
             r.repaid += Math.mulDiv(principal, heldFraction, WAD).toUint128();
         }

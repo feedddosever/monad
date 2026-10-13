@@ -55,9 +55,9 @@ library GasLimits {
     uint256 internal constant FUND_RESERVE = 155_000; // 107,521
     uint256 internal constant DEPOSIT = 230_000; // 166,343
     uint256 internal constant WITHDRAW = 145_000; // 99,459
-    uint256 internal constant BORROW_STABLE = 370_000; // 285,918
+    uint256 internal constant BORROW_STABLE = 370_000; // 285,963
     uint256 internal constant REPAY = 265_000; // 196,762
-    uint256 internal constant MARK_DEFAULT = 355_000; // 273,728 (stable loan)
+    uint256 internal constant MARK_DEFAULT = 355_000; // 273,812 (stable loan)
     uint256 internal constant SUBMIT_ATTESTATION = 130_000; // 85,033
     uint256 internal constant SEND_MON = 21_000; // plain transfer to an EOA is exactly 21,000
 }

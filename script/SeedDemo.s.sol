@@ -13,14 +13,14 @@ import {GasLimits} from "./Params.sol";
 ///         until it prints SEED_DONE. Each tick reads chain state and sends only the transactions that are due.
 ///
 /// Three wallets are derived from PRIVATE_KEY (keys never printed):
-///   good-payer  three loans, each repaid on time after holding it 40 of 60 s  -> score ~934, collateral ~50%
+///   good-payer  three loans, each repaid on time after holding it 46 of 60 s  -> score ~941, collateral ~47%
 ///   new-wallet  funded, no history                                           -> score 800, collateral 100%
 ///   late-payer  one loan repaid after the due time                           -> score ~571, collateral 100%
 contract SeedDemo is Script {
     uint256 internal constant GAS_MON = 0.6 ether; // per wallet; covers ~15 txs charged at their gas limits
     uint256 internal constant STABLE_FLOAT = 2_000e6;
-    uint256 internal constant HOLD_SECONDS = 40; // repay 40 s into a 60 s term: on time with 20 s of slack
-    uint256 internal constant GOOD_TARGET_EARNED = 2.4e18; // ~3 loans
+    uint256 internal constant HOLD_SECONDS = 46; // past 75% of the 60 s term (full credit), 14 s before due
+    uint256 internal constant GOOD_TARGET_EARNED = 3e18; // three full loans
 
     struct Wallet {
         string label;
@@ -62,7 +62,7 @@ contract SeedDemo is Script {
     function _tickGoodPayer(Wallet memory w) internal returns (bool done) {
         (uint128 principal,,, uint64 start,,,,) = pool.loans(w.addr);
         if (principal != 0) {
-            // Ticks run every few seconds, so this lands 40-50 s into the 60 s term: on time, ~67% held.
+            // Ticks run every few seconds, so this lands 46-56 s into the 60 s term: on time, full credit.
             if (block.timestamp >= start + HOLD_SECONDS) _repay(w);
             return false;
         }

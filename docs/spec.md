@@ -24,14 +24,14 @@ One lender pool; collateral in mUSDC or MON. Each on-time repayment lowers a bor
 
 ```math
 \begin{aligned}
-E &= \textstyle\sum_{k\ \text{on time}} \min\!\left(1,\ \frac{P_k\,\tau_k}{\bar P\,\bar T}\right) && \text{history in reference-loan units}\\
+E &= \textstyle\sum_{k\ \text{on time}} \min\!\left(1,\ \frac{P_k\,\tilde\tau_k}{\bar P\,\bar T}\right), \quad \tilde\tau_k = \begin{cases}\bar T & \tau_k \ge \tfrac34\bar T\\ \tau_k & \text{else}\end{cases} && \text{history in reference-loan units}\\
 PD &= \frac{b + F}{a + gA + E + b + F}, \quad F = \tfrac12\left(n_{\text{late}} + n_{\text{liq}} + n_{\text{extLiq}}\right), \quad A = \min\!\left(1, \tfrac{\text{age}}{1\,\text{yr}}\right) && \text{Beta}(a,b)\text{ posterior mean}\\
 c &= 1 \text{ if } E < 1, \text{ else } c_{\min} + (1 - c_{\min})\min\!\left(1, PD/PD_0\right), \quad PD_0 = \tfrac{b}{a+b} && \text{collateral ratio}\\
-APR &= \underbrace{r_0 + r_1 U}_{\text{to LPs}} + \underbrace{PD\,(1-c)/T}_{\text{to reserve}}, \qquad L = \min(L_{\max},\ L_0 + mV) && V = \text{time-weighted repaid principal}
+APR &= \underbrace{r_0 + r_1 U}_{\text{to LPs}} + \underbrace{PD\,(1-c)/T}_{\text{to reserve}}, \qquad L = \min(L_{\max},\ L_0 + mV) && V = \textstyle\sum_{k\ \text{on time}} P_k\,\tilde\tau_k/\bar T
 \end{aligned}
 ```
 
-Score $= 1000\,(1-PD)$; a default bars the address. Premium = fair price of the unsecured share (PD × LGD per term). MON counts at haircut value: $C\,p\,(1-h) \ge cP$.
+Score $= 1000\,(1-PD)$; a default bars the address. A loan held for at least ¾ of its term counts as held for all of it, so repaying a few days early costs nothing, while instant borrow-repay loops still earn almost nothing. Premium = fair price of the unsecured share (PD × LGD per term). MON counts at haircut value: $C\,p\,(1-h) \ge cP$.
 
 **Parameters:** $a=1$, $b=0.25$ (so $PD_0=20\%$), $g=1$, $c_{\min}=25\%$, $T=\bar T=30$ d, $\bar P=100$, $r_0=2\%$, $r_1=10\%$, $L_0=100$, $m=0.5$, $L_{\max}=5000$, $h=20\%$, $\theta=85\%$, max utilisation 90%.
 
@@ -67,7 +67,7 @@ events: Borrowed, Repaid(toLPs, toReserve, late), Defaulted(recovered, cover, lp
 
 - **Default:** after due + 3 d grace, losses hit collateral → reserve → LPs; the address is barred.
 - **Sybil and bust-out:** at origination $\sum(1-c)P \le kR$ ($R$ = reserve); with $k=1$, LP principal survives every unsecured loan defaulting. One secured loan (0.58 interest) unlocks about 50 mUSDC of bust-out per sybil; only $kR$ caps it.
-- **Wash borrowing:** ≤ 1 unit of $E$ per loan and one open loan per address, so ≤ 1 unit per 30 days; premiums are sunk.
+- **Wash borrowing:** ≤ 1 unit of $E$ per loan and one open loan per address, so ≤ 1 unit per 22.5 days (¾ of a term); premiums are sunk.
 - **Oracles:** none for mUSDC. MON: Pyth pull update in every tx (testnet price 8 days stale; ≤ 60 s, conf ≤ 2%; Hermes key server-side). No Chainlink MON/USD on testnet. Attestations expire, no replay.
 - **Reentrancy:** CEI + `nonReentrant`; MON sent last; exact Pyth fee, excess refunded; OZ virtual shares.
 - **Rounding:** against the user (debt, collateral, PD up; payouts down); LP cash, reserve, collateral counted separately.

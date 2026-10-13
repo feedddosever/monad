@@ -89,6 +89,31 @@ contract CreditRegistryTest is Test {
         assertEq(registry.terms(alice).collateralRatio, WAD);
     }
 
+    function test_ThreeQuartersOfTermEarnsFullCredit() public {
+        registry.onRepaid(alice, 100e6, TERM * 3 / 4, false);
+        (uint128 earned, uint128 repaid,,,,,,) = registry.records(alice);
+        assertEq(earned, WAD, "counts as a fully held reference loan");
+        assertEq(repaid, 100e6);
+        assertLt(registry.terms(alice).collateralRatio, WAD, "first loan unlocks lower collateral");
+    }
+
+    function test_JustUnderThreeQuartersIsProportional() public {
+        registry.onRepaid(alice, 100e6, TERM * 3 / 4 - 1, false);
+        (uint128 earned,,,,,,,) = registry.records(alice);
+        assertLt(earned, 0.75e18);
+        assertGt(earned, 0.7499e18);
+        assertEq(registry.terms(alice).collateralRatio, WAD, "still fully secured");
+    }
+
+    function testFuzz_HeldFraction(uint256 elapsed) public view {
+        elapsed = bound(elapsed, 0, 2 * TERM);
+        uint256 fraction = registry.heldFractionOf(elapsed);
+        uint256 linear = elapsed * WAD / TERM;
+        assertEq(fraction, linear >= registry.FULL_CREDIT_SHARE() ? WAD : linear);
+        assertLe(fraction, WAD);
+        if (elapsed > 0) assertGe(fraction, registry.heldFractionOf(elapsed - 1), "monotone");
+    }
+
     function test_BigLoanEarnsAtMostOneUnit() public {
         registry.onRepaid(alice, 5000e6, TERM, false);
         (uint128 earned,,,,,,,) = registry.records(alice);
