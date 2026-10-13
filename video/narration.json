@@ -1,6 +1,6 @@
 {
  "intro": {
-  "tts": "On-chain lending only works if you're already rich. Every major market wants well over a hundred percent collateral, so a borrower with a perfect record gets the same terms as a wallet made five minutes ago. Repayment history is public. Nobody prices it. Monad Credit does.",
+  "tts": "On-chain lending only works if you're already rich. Every major market wants well over a hundred percent collateral, so a borrower with a perfect record gets the same terms as a wallet made five minutes ago. Repayment history is public. Nobody prices it. Monadic does.",
   "caption": ""
  },
  "model": {
@@ -60,7 +60,7 @@
   "caption": ""
  },
  "next": {
-  "tts": "Next: wallet-age attestations, MON collateral with Pith prices, and lender tranches. Monad Credit: your history is your collateral.",
+  "tts": "Next: wallet-age attestations, MON collateral with Pith prices, and lender tranches. Monadic: your history is your collateral.",
   "caption": ""
  },
  "loan4": {

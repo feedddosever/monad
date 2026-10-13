@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Monad Credit",
+  title: "Monadic",
   description: "Undercollateralised lending priced on onchain credit history, on Monad.",
 };
 

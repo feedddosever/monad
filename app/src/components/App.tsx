@@ -117,7 +117,7 @@ export default function App() {
   return (
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-4 px-4 py-8">
       <header className="flex items-center justify-between">
-        <span className="text-lg font-semibold tracking-tight">Monad Credit</span>
+        <span className="text-lg font-semibold tracking-tight">Monadic</span>
         {wallet.account ? (
           <a className={chip} href={addressUrl(wallet.account)} target="_blank" rel="noreferrer">
             <span className={wallet.onRightChain ? "text-emerald-500" : "text-rose-500"}>●</span> {short(wallet.account)}

@@ -1,4 +1,4 @@
-# Monad Credit
+# Monadic
 
 > Undercollateralised loans priced on your onchain repayment history.
 
