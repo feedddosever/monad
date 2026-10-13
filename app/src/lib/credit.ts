@@ -107,8 +107,8 @@ export function explain(c: Credit, now: number): Factor[] {
       title: "On-time repayments",
       detail:
         r.earned === 0
-          ? "None yet. Your first loan is fully secured. One full loan of history (100 mUSDC held to its due date and repaid on time) starts lowering your collateral."
-          : `Worth ${r.earned.toFixed(2)} full loans (100 mUSDC held for a whole term). Each one pushes your score up.`,
+          ? "None yet. Your first loan is fully secured. One full loan of history (100 mUSDC repaid on time after at least ¾ of its term) starts lowering your collateral."
+          : `Worth ${r.earned.toFixed(2)} full ${r.earned.toFixed(2) === "1.00" ? "loan" : "loans"} (100 mUSDC repaid on time after at least ¾ of its term). Each one pushes your score up.`,
       effect: r.earned > 0 ? "up" : "neutral",
     },
     {
@@ -130,9 +130,18 @@ export function explain(c: Credit, now: number): Factor[] {
   ];
 }
 
-/** Score after repaying `principal` on time, having held it for the whole term. */
-export function scoreAfterOnTimeRepay(c: Credit, principal: bigint, now: number) {
-  const extra = Math.min(1, Number(principal) / Number(c.params.refPrincipal));
+/** Matches CreditRegistry.FULL_CREDIT_SHARE: an on-time loan held this share of its term counts as fully held. */
+export const FULL_CREDIT_SHARE = 0.75;
+
+/** History credit for having held a loan `elapsed` of `term` seconds (CreditRegistry.heldFractionOf). */
+export function heldFraction(elapsed: number, term: number) {
+  const f = term > 0 ? Math.max(0, elapsed) / term : 0;
+  return f >= FULL_CREDIT_SHARE ? 1 : f;
+}
+
+/** Score after repaying `principal` on time, having held it for `held` (0-1) of the term. */
+export function scoreAfterOnTimeRepay(c: Credit, principal: bigint, now: number, held = 1) {
+  const extra = Math.min(1, (Number(principal) * held) / Number(c.params.refPrincipal));
   return Math.floor(1000 * (1 - pdOf(c.params, c.record, now, extra)));
 }
 

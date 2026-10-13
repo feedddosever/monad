@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { formatUnits, parseUnits, type Address, type WalletClient } from "viem";
 import { GAS, USDC_DECIMALS, WAD, contracts, poolAbi, timeScale, usdcAbi } from "@/lib/contracts";
-import { explain, fmtPct, readCredit, scoreAfterOnTimeRepay, type Credit } from "@/lib/credit";
+import { explain, FULL_CREDIT_SHARE, fmtPct, heldFraction, readCredit, scoreAfterOnTimeRepay, type Credit } from "@/lib/credit";
 import { addressUrl, chain, publicClient } from "@/lib/monad";
 import { TxStatus, describeError, useTx } from "./Tx";
 import { useWallet } from "./useWallet";
@@ -16,6 +16,8 @@ const YEAR = 365 * 24 * 3600;
 const usd = (x: bigint, digits = 2) =>
   Number(formatUnits(x, USDC_DECIMALS)).toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
 const pct = (x: bigint, digits = 1) => fmtPct(Number(x) / 1e18, digits);
+/** Interest per loan term as a share of principal, from an annual rate (WAD) and the term in protocol seconds. */
+const perTerm = (apr: bigint, term: number) => (apr * BigInt(term)) / BigInt(YEAR);
 const short = (a: string) => `${a.slice(0, 6)}…${a.slice(-4)}`;
 
 export default function App() {
@@ -172,17 +174,33 @@ function CreditScreen({ credit, account, now, onBorrow }: { credit: Credit; acco
         <div className="mt-2 grid grid-cols-3 gap-3">
           <Stat title="Credit limit" value={`${usd(limit, 0)} mUSDC`} testId="limit" />
           <Stat title="Collateral" value={`${fmtPct(credit.terms.collateralRatio, 0)} of loan`} testId="collateral" />
-          <Stat title="Rate (APR)" value={quote ? pct(quote.apr) : "…"} testId="apr" />
+          <Stat
+            title={`Cost per ${Math.round(credit.params.term / 86400)}-day loan`}
+            value={quote ? pct(perTerm(quote.apr, credit.params.term), 2) : "…"}
+            testId="apr"
+          />
         </div>
         {quote ? (
-          <p className="mt-3 text-xs text-zinc-500">
-            APR = {pct(quote.baseRate)} pool rate + {pct(quote.premium)} risk premium (estimated default chance × the
-            unsecured share, per term). The premium funds the lenders&apos; first-loss reserve.
+          <p className="mt-3 text-xs text-zinc-500" data-testid="apr-breakdown">
+            {quote.premium === 0n ? (
+              <>
+                That&apos;s {pct(quote.apr)} APR, the pool rate. Your loan is fully secured, so there&apos;s no risk
+                premium.
+              </>
+            ) : (
+              <>
+                That&apos;s {pct(quote.apr)} APR: {pct(quote.baseRate)} pool rate + {pct(quote.premium)} risk premium. You
+                skip posting {fmtPct(1 - credit.terms.collateralRatio, 0)} of the loan as collateral; the premium is the
+                fair price of that unsecured share (default chance × unsecured share, per loan) and funds the lenders&apos;
+                first-loss reserve.
+              </>
+            )}
           </p>
         ) : null}
         {!barred && !credit.loan ? (
           <p className="mt-2 text-xs text-zinc-500">
-            Hold a {usd(limit, 0)} mUSDC loan to its due date, repay on time, and your score rises to about {nextScore}. Repaying early earns proportionally less history.
+            Repay a {usd(limit, 0)} mUSDC loan on time, at least ¾ of the way through its term, and your score rises to
+            about {nextScore}. Repaying sooner earns proportionally less history.
           </p>
         ) : null}
       </Card>
@@ -406,6 +424,17 @@ function LoanScreen({
 
   const graceSeconds = Math.ceil((3 * 24 * 3600) / timeScale);
   const secondsLeft = loan.due - now;
+  const termSeconds = loan.due - loan.start;
+  const fullCreditAt = loan.start + Math.ceil(FULL_CREDIT_SHARE * termSeconds);
+  const held = heldFraction(now - loan.start, termSeconds);
+  const historyLine =
+    now === 0
+      ? "…"
+      : secondsLeft < 0
+        ? "Repaying late counts as half a missed payment, so your score will drop."
+        : now >= fullCreditAt
+          ? `Full history credit: repay now and your score rises to about ${scoreAfterOnTimeRepay(credit, loan.principal, now)}.`
+          : `Full history credit in ${fullCreditAt - now}s (¾ of the term). Repaying now counts as ${Math.round(100 * held)}% of it: score about ${scoreAfterOnTimeRepay(credit, loan.principal, now, held)}.`;
   const status =
     now === 0
       ? "…"
@@ -473,9 +502,8 @@ function LoanScreen({
           <dt className="text-zinc-500">Rate (APR)</dt>
           <dd className="text-right tabular-nums">{fmtPct(loan.baseRate + loan.premium)}</dd>
         </dl>
-        <p className="mt-3 text-xs text-zinc-500">
-          Repaying on time raises your score to about {scoreAfterOnTimeRepay(credit, loan.principal, now)} if you held the
-          loan for the full term; repaying early earns proportionally less history.
+        <p className="mt-3 text-xs text-zinc-500" data-testid="history-credit">
+          {historyLine}
         </p>
         {problem ? <p className="mt-3 text-sm text-rose-600 dark:text-rose-400">{problem}</p> : null}
         <TxStatus state={tx.state} />
