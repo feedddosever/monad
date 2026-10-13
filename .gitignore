@@ -24,6 +24,9 @@ keystores/
 node_modules/
 .next/
 
+# Python
+__pycache__/
+
 # OS / editor
 .DS_Store
 .idea/
