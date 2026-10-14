@@ -2,6 +2,11 @@
   "chainId": 10143,
   "explorer": "https://testnet.monadvision.com",
   "timeScale": 43200,
-  "contracts": null,
+  "contracts": {
+    "CreditPool": "0x3462118Be4c5d89576ED1219100E2AfdDcF1ad6A",
+    "CreditRegistry": "0xb71c3cD30a325aD98822D1d0949AA93b3E13D75F",
+    "MonPriceOracle": "0x2570A9fad7151DeA8DC968aaF0689b67b46262b8",
+    "MockUSDC": "0x77354D89Bb4b1B2455957C8097995f2C3DA7F758"
+  },
   "demoWallets": {}
 }

@@ -1,0 +1,97 @@
+{
+  "network": "Monad Testnet",
+  "chainId": 10143,
+  "explorer": "https://testnet.monadvision.com",
+  "deployBlock": 70865602,
+  "timeScale": 43200,
+  "deployer": "0xC97c2Ce465052D900Be83FF7a71E8804C21Bbaf6",
+  "attestor": "0xC97c2Ce465052D900Be83FF7a71E8804C21Bbaf6",
+  "contracts": {
+    "CreditPool": {
+      "address": "0x3462118Be4c5d89576ED1219100E2AfdDcF1ad6A",
+      "url": "https://testnet.monadvision.com/address/0x3462118Be4c5d89576ED1219100E2AfdDcF1ad6A"
+    },
+    "CreditRegistry": {
+      "address": "0xb71c3cD30a325aD98822D1d0949AA93b3E13D75F",
+      "url": "https://testnet.monadvision.com/address/0xb71c3cD30a325aD98822D1d0949AA93b3E13D75F"
+    },
+    "MonPriceOracle": {
+      "address": "0x2570A9fad7151DeA8DC968aaF0689b67b46262b8",
+      "url": "https://testnet.monadvision.com/address/0x2570A9fad7151DeA8DC968aaF0689b67b46262b8"
+    },
+    "MockUSDC": {
+      "address": "0x77354D89Bb4b1B2455957C8097995f2C3DA7F758",
+      "url": "https://testnet.monadvision.com/address/0x77354D89Bb4b1B2455957C8097995f2C3DA7F758"
+    }
+  },
+  "demoWallets": {},
+  "transactions": [
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "deploy MockUSDC",
+      "hash": "0x58dc3491a8d27cca39d00fceb5f0f026aef9ef6016378e171b327a2fdbc2c163",
+      "url": "https://testnet.monadvision.com/tx/0x58dc3491a8d27cca39d00fceb5f0f026aef9ef6016378e171b327a2fdbc2c163"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "deploy CreditRegistry",
+      "hash": "0xdc65ba28215422351edaa4628ba299a8b9b2f3ae2b347814a7dd971120ffca23",
+      "url": "https://testnet.monadvision.com/tx/0xdc65ba28215422351edaa4628ba299a8b9b2f3ae2b347814a7dd971120ffca23"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "deploy MonPriceOracle",
+      "hash": "0xbac6b96ca439fbde8e89e4a56950eb3426324411ab39c95b3fd73c2bd1c12460",
+      "url": "https://testnet.monadvision.com/tx/0xbac6b96ca439fbde8e89e4a56950eb3426324411ab39c95b3fd73c2bd1c12460"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "deploy CreditPool",
+      "hash": "0xc8a9ab7f51950d8a5c6a514bed0183955a2b70f50840a92c7e75747144fac4d2",
+      "url": "https://testnet.monadvision.com/tx/0xc8a9ab7f51950d8a5c6a514bed0183955a2b70f50840a92c7e75747144fac4d2"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "CreditRegistry.setPool",
+      "hash": "0x0098afd7871cb8fea64bd2bda4839fb1e8057b0a9c626012bc2525e712364b27",
+      "url": "https://testnet.monadvision.com/tx/0x0098afd7871cb8fea64bd2bda4839fb1e8057b0a9c626012bc2525e712364b27"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "MockUSDC.mint",
+      "hash": "0x6aad58375bb34bdd7a75d13ab5cb0bf2cdf68d0a8545aa6de72d736c148ac12b",
+      "url": "https://testnet.monadvision.com/tx/0x6aad58375bb34bdd7a75d13ab5cb0bf2cdf68d0a8545aa6de72d736c148ac12b"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "MockUSDC.approve",
+      "hash": "0xfa959b42c0a83f95246510ed2a2a6373b65b77bfdddb7097ca62c9213ecc5815",
+      "url": "https://testnet.monadvision.com/tx/0xfa959b42c0a83f95246510ed2a2a6373b65b77bfdddb7097ca62c9213ecc5815"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "CreditPool.fundReserve",
+      "hash": "0x8e731d1255325b0b86e9de6c386557462911f5140a164ead0143855118e2e6bd",
+      "url": "https://testnet.monadvision.com/tx/0x8e731d1255325b0b86e9de6c386557462911f5140a164ead0143855118e2e6bd"
+    },
+    {
+      "step": "deploy",
+      "by": "deployer",
+      "action": "CreditPool.deposit",
+      "hash": "0x6c150f81764730d8a6780a036ba1b251fd2b4455b45c2364bb341331912c8bee",
+      "url": "https://testnet.monadvision.com/tx/0x6c150f81764730d8a6780a036ba1b251fd2b4455b45c2364bb341331912c8bee"
+    }
+  ],
+  "CreditPool": "0x3462118Be4c5d89576ED1219100E2AfdDcF1ad6A",
+  "CreditRegistry": "0xb71c3cD30a325aD98822D1d0949AA93b3E13D75F",
+  "MonPriceOracle": "0x2570A9fad7151DeA8DC968aaF0689b67b46262b8",
+  "MockUSDC": "0x77354D89Bb4b1B2455957C8097995f2C3DA7F758"
+}
