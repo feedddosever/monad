@@ -62,7 +62,14 @@ export default function App() {
   else if (!wallet.account)
     body = (
       <Notice title="See what your onchain history is worth">
-        <p>Connect a wallet to see your credit score, why it is what it is, and what you can borrow.</p>
+        <p>Connect your own wallet to see your credit score, why it is what it is, and what you can borrow.</p>
+        <p className="mt-2 text-sm text-zinc-500">
+          You need a browser wallet (MetaMask, Rabby…) and a little Monad Testnet MON for gas. Get some from the{" "}
+          <a className="underline underline-offset-2" href="https://testnet.monad.xyz" target="_blank" rel="noreferrer">
+            Monad faucet
+          </a>
+          . Test stablecoins are free in the app.
+        </p>
         <button className={btn} onClick={wallet.connect}>
           Connect wallet
         </button>
