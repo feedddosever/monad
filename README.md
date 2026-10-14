@@ -9,6 +9,7 @@ Spec: [docs/spec.md](docs/spec.md) · Security notes: [docs/security-notes.md](d
 |---|---|
 | Track | Onchain Finance & Trading |
 | Network | Monad Testnet (10143) |
+| Live app | [monadic-test11-17fe.vercel.app](https://monadic-test11-17fe.vercel.app) |
 | License | [MIT](LICENSE) |
 
 ## Problem
@@ -129,7 +130,7 @@ FOUNDRY_ETH_RPC_URL= forge test --gas-report
 ```shell
 cp .env.example .env                 # set PRIVATE_KEY to a funded, testnet-only key (or export it)
 scripts/deploy-testnet.sh            # deploy, verify on Sourcify, write deployments/testnet.json + README table
-scripts/seed-demo.sh                 # ~3-4 min: good payer, new wallet, late payer
+scripts/seed-demo.sh                 # optional, ~3-4 min: good payer, new wallet, late payer
 ```
 
 The demo clock runs at `TIME_SCALE = 43,200` (1 s = 12 h), so a 30-day loan lasts 60 s. Deploy with `TIME_SCALE=1` for real time.
@@ -152,9 +153,9 @@ The app reads contract addresses from `app/src/lib/deployment.json`, which the d
 
 ## Demo video
 
-TODO (author): public link (YouTube / Loom / Vimeo), **3:00 max**.
+The demo video (2:48) and pitch video (1:15) are linked from the project's Metropolis submission. Both are narrated by a synthetic voice (Piper TTS). You can also try the live app yourself: **https://monadic-test11-17fe.vercel.app** (Monad Testnet; bring your own wallet with a little testnet MON).
 
-The video is generated from the live app by [`video/`](video): narrated slides, then a fresh wallet connecting, borrowing, waiting for full history credit, repaying and watching its terms change, then the seeded profiles. See [video/README.md](video/README.md) to re-record it on Monad Testnet. A shot list for recording by hand is in [docs/demo-script.md](docs/demo-script.md).
+The demo video is generated from the live app by [`video/`](video): narrated slides, then a fresh wallet connecting, borrowing, waiting for full history credit, repaying and watching its terms change, then the seeded profiles. See [video/README.md](video/README.md) to re-record it on Monad Testnet. A shot list for recording by hand is in [docs/demo-script.md](docs/demo-script.md).
 
 ## AI tools used
 
