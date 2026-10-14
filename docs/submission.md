@@ -76,11 +76,11 @@ https://github.com/feedddosever/monad
 **Pitch video** (up to 2 min): TODO, record yourself (Loom works) using this script, about 75 s:
 
 ```text
-Hi, I'm [your name], and I built Monadic for Monad Metropolis.
+Hi, I'm Ekaterina Fedoseeva, and I built Monadic for Monad Metropolis. (Generated whiteboard version: a synthetic voice, since I've temporarily lost my voice.)
 Onchain lending only works if you're already rich. Every market asks for 150% collateral, so someone who has repaid a hundred loans gets the same terms as a brand-new wallet. Repayment history is public. Nobody prices it.
 Monadic does. Every loan you repay on time updates an onchain credit score, and that score sets how much collateral you post, what you pay, and how much you can borrow. Start fully collateralised; repay on time and your collateral falls, all the way to 25%. Lenders earn the pool rate, protected by collateral and a first-loss reserve funded by risk premiums.
 I'm building it on Monad because a credit market should update every block. Interest accrues every second, a repayment changes your terms in the same transaction, and a full borrow-and-repay costs a fraction of a cent.
-I'm an economist and a Solidity developer, and I built this solo during the hackathon. Next: wallet-age attestations, MON collateral live with Pyth, and a mainnet launch with small limits. Your history is your collateral.
+I'm a project and product manager who develops as a hobby, and I built this solo during the hackathon. Next: wallet-age attestations, MON collateral live with Pyth, and a mainnet launch with small limits. Your history is your collateral.
 ```
 
 **Steps to try the product** (private to judges; 8,000)
