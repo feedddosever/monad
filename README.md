@@ -3,13 +3,12 @@
 > Undercollateralised loans priced on your onchain repayment history.
 
 Built for the [Monad Metropolis hackathon](https://hackathon.monad.xyz) (Sept 1 to Oct 13, 2026).
-Spec: [docs/spec.md](docs/spec.md) · Security notes: [docs/security-notes.md](docs/security-notes.md) · Gas: [docs/gas-report.md](docs/gas-report.md) · Checklist: [docs/rules-checklist.md](docs/rules-checklist.md)
+Spec: [docs/spec.md](docs/spec.md) · Security notes: [docs/security-notes.md](docs/security-notes.md) · Gas: [docs/gas-report.md](docs/gas-report.md)
 
 | | |
 |---|---|
 | Track | Onchain Finance & Trading |
 | Network | Monad Testnet (10143) |
-| Demo video | TODO (author): link, 3:00 max |
 | License | [MIT](LICENSE) |
 
 ## Problem
